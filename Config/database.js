@@ -1,14 +1,16 @@
-const mongoose = require('mongoose');
-require('dotenv').config(); 
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
-async function connectDatabase() {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Conectado ao MongoDB com sucesso!');
-  } catch (error) {
-    console.error('Erro ao conectar ao MongoDB:', error.message);
-    process.exit(1);
-  }
-}
+mongoose.connect(process.env.MONGO_URI); // Agora aponta pro MongoDB local
+const connection = mongoose.connection;
 
-module.exports = connectDatabase;
+connection.on("error", () => {
+  console.log("❌ Erro ao conectar com o MongoDB local");
+});
+
+connection.once("open", () => {
+  console.log("✅ Conectado ao MongoDB local com sucesso!");
+});
+
+export default mongoose;

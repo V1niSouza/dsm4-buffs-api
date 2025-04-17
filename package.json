@@ -2,11 +2,12 @@
   "name": "dsm4-buffs-api",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js",
-    "start": "node app.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -15,7 +16,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/CyberLiveStock/dsm4-buffs-api/issues"
   },
