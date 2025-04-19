@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI); // Agora aponta pro MongoDB local
+mongoose.connect(process.env.MONGO_URI); 
 const connection = mongoose.connection;
 
 connection.on("error", () => {
