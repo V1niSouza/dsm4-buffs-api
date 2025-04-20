@@ -12,10 +12,10 @@ class propertyService {
     }
 
     // Método para Cria uma nova Propriedade
-    async Create(nome, finalidade, endereco, responsavel){
+    async Create(nome, finalidade, endereco, tpManejo, responsavel){
         try{
             const newProperty = new Property({
-                nome, finalidade, endereco, responsavel
+                nome, finalidade, endereco, tpManejo, responsavel
             })
             await newProperty.save()
         } catch (error) {
@@ -39,12 +39,12 @@ class propertyService {
 
     // Método para Atualizar uma Propriedade
     async Update(
-        id, nome, finalidade, endereco, responsavel
+        id, nome, finalidade, endereco, tpManejo, responsavel
     ){
         try{
             const UpdateProperty = await Property.findByIdAndUpdate(id,
                 {
-                    nome, finalidade, endereco, responsavel
+                    nome, finalidade, endereco, tpManejo, responsavel
                 },
                 { new:  true}
             );

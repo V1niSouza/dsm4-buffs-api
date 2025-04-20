@@ -12,6 +12,7 @@ const enderecoSchema = new mongoose.Schema({
 const propertySchema = new mongoose.Schema({
   nome:String,
   finalidade: String,
+  tpManejo: String, // Pastos (piquete) ou concentração 
   endereco: [enderecoSchema], 
   responsavel: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
