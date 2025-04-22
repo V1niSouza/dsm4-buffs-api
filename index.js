@@ -7,6 +7,7 @@ import buffaloRoutes from "./routes/buffaloRoutes.js";
 import feedingRoutes from "./routes/feedingRoutes.js";
 import reproductionRoutes from "./routes/reproductionRoutes.js";
 import lactationRoutes from "./routes/lactationRoutes.js";
+import productionRoutes from "./routes/productionRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ app.use("/", buffaloRoutes); // Rota Bufalo
 app.use("/", feedingRoutes); // Rota Alimentação
 app.use("/", reproductionRoutes); // Rota Reprodução
 app.use("/", lactationRoutes); // Rota Lactação
+app.use("/", productionRoutes); // Rota Produção
 
 app.listen(port, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${port}`);
