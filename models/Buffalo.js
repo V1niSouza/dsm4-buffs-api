@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // Documento Aninhado
 const atividadeSchema = new mongoose.Schema({
     status: String, // Ativa, Descartada
-    observacao: String, //Motivo
+    observacao: String, // Motivo
     dataAtualizacao: Date
 });
 
