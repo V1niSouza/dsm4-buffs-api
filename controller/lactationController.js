@@ -1,4 +1,5 @@
 import lactationService from "../services/lactationService.js";
+import { createLactationSchema, updateLactationSchema } from "../dtos/lactation.dto.js"
 import { ObjectId } from "mongodb";
 
 // Lista todos as Lactações
@@ -15,11 +16,18 @@ const getAllLactation = async (req, res) => {
 // Criar um nova Lactação
 const createLactation = async (req, res) => {
     try{
-        const {tagBufala, status, dataAtualizacao, metrica} = req.body;
-        await lactationService.Create(tagBufala, status, dataAtualizacao, metrica);
+        // Validando os dados recebidos
+        const parsedData = createLactationSchema.parse(req.body);
+        // Se passou na validação, prossegue com o processo de criação
+        await lactationService.Create(parsedData);
         res.sendStatus(201); // Cod. 201 (Created)
     } catch (error) {
         console.log(error);
+        if (error.errors) {
+            // Se o erro for de validação, retorne com status 400 e os erros
+            return res.status(400).json({ error: error.errors });
+        }
+        // Caso contrário, erro genérico do servidor
         res.status(500).json({error:"Erro interno do servidor."}) // Cod. 500 (Internal Server Error)
     }
 };
@@ -45,14 +53,17 @@ const updateLactation = async (req, res) => {
     try{
         if(ObjectId.isValid(req.params.id)){
             const id = req.params.id;
-            const {tagBufala, status, dataAtualizacao, metrica} = req.body;
-            const lactation = await lactationService.Update(id, tagBufala, status, dataAtualizacao, metrica);
+            const parsedData = updateLactationSchema.parse(req.body);
+            const lactation = await lactationService.Update(id, parsedData);
             res.status(200).json({ lactation }); // Cod. 200 (OK)
         } else {
             res.sendStatus(400); // Cod. 400 (Bad request)
         }
     } catch (error) {
-        console.log(error);
+        if (error.errors) {
+            // Se o erro for de validação
+            return res.status(400).json({ error: error.errors});
+        }
         res.sendStatus(500); // Cod. 500 (Internal Sever Error)
     }
 };

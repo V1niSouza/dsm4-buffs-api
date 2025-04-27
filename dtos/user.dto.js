@@ -22,7 +22,7 @@ export const createUserSchema = z.object({
         message: "Data de nascimento deve ser no passado"
       }),
     cargo: z.string(),
-    endereco: z.object(enderecoSchema).optional()
+    endereco: z.array(enderecoSchema).optional()
 })
 
 // Schema principal para Atualização
@@ -39,5 +39,5 @@ export const updateUserSchema = z.object({
       message: "Data de nascimento deve ser no passado"
     }).optional(),
   cargo: z.string().optional(),
-  endereco: z.object(enderecoSchema).optional()
+  endereco: z.array(enderecoSchema).optional()
 })

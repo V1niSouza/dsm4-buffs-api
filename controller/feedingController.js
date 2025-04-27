@@ -1,3 +1,4 @@
+import { createFeedingSchema, updateFeedingSchema } from "../dtos/feeding.dto.js";
 import feedingService from "../services/feedingService.js";
 import { ObjectId } from "mongodb";
 
@@ -15,12 +16,19 @@ const getAllFeeding = async (req, res) => {
 // Criar uma nova Alimentação
 const createFeeding = async (req, res) => {
     try{
-        const {nome, tpAlimentacao, quantidade, unidadeMedida, grupoDestinado, frequencia, desc} = req.body;
-        await feedingService.Create(nome, tpAlimentacao, quantidade, unidadeMedida, grupoDestinado, frequencia, desc);
+        // Validando os dados recebidos
+        const parsedData = createFeedingSchema.parse(req.body);
+        // Se passou na validação, prossegue com o processo de criação
+         await feedingService.Create(parsedData);
         res.sendStatus(201); // Cod. 201 (Created)
     } catch (error) {
         console.log(error);
-        res.status(500).json({error:"Erro interno do servidor."}) // Cod. 500 (Internal Server Error)
+        if (error.errors) {
+            // Se o erro for de validação, retorne com status 400 e os erros
+            return res.status(400).json({ error: error.errors });
+        }    
+        // Caso contrário, erro genérico do servidor
+        res.status(500).json({ error: "Erro interno do servidor." }); // Cod. 500 (Internal Server Error)
     }
 };
 
@@ -45,15 +53,18 @@ const updateFeeding = async (req, res) => {
     try{
         if(ObjectId.isValid(req.params.id)){
             const id = req.params.id;
-            const {nome, tpAlimentacao, quantidade, unidadeMedida, grupoDestinado, frequencia, desc} = req.body;
-            const feeding = await feedingService.Update(id, nome, tpAlimentacao, quantidade, unidadeMedida, grupoDestinado, frequencia, desc);
+            const parsedData = updateFeedingSchema.parse(req.body); 
+            const feeding = await feedingService.Update(id, parsedData);
             res.status(200).json({ feeding }); // Cod. 200 (OK)
         } else {
             res.sendStatus(400); // Cod. 400 (Bad request)
         }
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500); // Cod. 500 (Internal Sever Error)
+        if (error.errors) {
+            // Se o erro for de validação
+            return res.status(400).json({ error: error.errors });
+        }
+        res.sendStatus(500); // Cod. 500 (Internal Server Error)
     }
 };
 

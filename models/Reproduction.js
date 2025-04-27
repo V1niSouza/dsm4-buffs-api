@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
+import { string } from "zod";
 
 // Documento 
 const reproductionSchema = new mongoose.Schema({
-    tagBufala: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Buffalo' }],
+    tagBufala: String,
     status: String, // Prenha, Cio
-    dataStatus: String, // Data que o status foi modificado
+    dataStatus: Date, // Data que o status foi modificado
     dataInseminacao: Date,
     tipoInseminacao: String, // Artificial, Monta Natural
     vetResponsavel: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    tagPai: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Buffalo' }]
+    tagPai: String
 })
 
 const Reproduction = mongoose.model('Reproduction', reproductionSchema)

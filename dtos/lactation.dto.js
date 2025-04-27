@@ -21,7 +21,7 @@ export const createLactationSchema = z.object({
 // Schema principal para Atualização
 export const updateLactationSchema = z.object({
     tagBufala: z.string(),
-    status: z.string().optional,
-    dataAtualizacao: z.coerce.date().optional,
+    status: z.string().optional(),
+    dataAtualizacao: z.coerce.date().optional(),
     metrica: z.array(metricSchema).optional()     
 })

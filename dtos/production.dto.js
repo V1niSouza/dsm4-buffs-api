@@ -33,8 +33,8 @@ export const updateProductionSchema = z.object({
     totalProduzido: z.number().optional(),
     totalRejeitado: z.number().optional(),
     totalRetirado: z.number().optional(),
-    taxaAprovacao: z.number().optional().min(0).max(100),
-    taxaRejeicao: z.number().optional().min(0).max(100),
+    taxaAprovacao: z.number().min(0).max(100),
+    taxaRejeicao: z.number().min(0).max(100),
     dataAtualizacao: z.coerce.date().optional(),
     coletas: z.array(coletaSchema).optional(),
     producao: z.array(producaoeSchema).optional()

@@ -1,3 +1,4 @@
+import { createLotSchema, updateLotSchema } from "../dtos/lot.dto.js";
 import Lot from "../models/Lot.js";
 
 class lotService {
@@ -12,14 +13,15 @@ class lotService {
     }
 
     // Método para Cria um novo Lote
-    async Create(nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda){
+    async Create(data){
         try{
-            const newLot = new Lot({
-                nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda
-            })
-            await newLot.save()
+            const validatedData = createLotSchema.parse(data);
+            const newLot = new Lot(validatedData);          
+            await newLot.save();
+            return newLot;
         } catch (error) {
             console.log(error)
+            throw new Error ("Erro na criação do Lote: " + error.message);
         }
     }
 
@@ -38,20 +40,27 @@ class lotService {
     }
 
     // Método para Atualizar um Lote
-    async Update(
-        id, nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda
-    ){
+    async Update(id, data){
         try{
-            const UpdateLote = await Lot.findByIdAndUpdate(id,
-                {
-                    nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda
-                },
+            // Validação dos dados com Zod
+            const validatedData = updateLotSchema.parse(data);
+            // Realiza a atualização no banco de dados
+            const updateLot = await Lot.findByIdAndUpdate(
+                id,
+                validatedData,
                 { new:  true}
             );
-            console.log(`Dados do Lote: ${nomeLote} do ID: ${id}, foram alterados com sucesso!`)
-            return UpdateLote
+            // Verifica se o item foi encontrado
+            if (!updateLot){
+                console.log(`Dados do Lote: ${nomeLote} do ID: ${id}, foram alterados com sucesso!`)
+                return null;
+            }
+            // Messagem de Sucesso
+            console.log(`Dados do Lote ${updateLot.nome} (ID: ${id}) foram alterados com sucesso!`);
+            return updateLot;
         } catch(error) {
             console.log(error);
+            throw new Error ("Erro na atualiação do Lote: " + error.message);
         }
     }
 

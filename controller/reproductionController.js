@@ -1,3 +1,4 @@
+import { createReproductionSchema, updateReproductionSchema } from "../dtos/reproduction.dto.js";
 import reproductionService from "../services/reproductionService.js";
 import { ObjectId } from "mongodb";
 
@@ -15,12 +16,18 @@ const getAllReproductions = async (req, res) => {
 // Criar uma nova Reprodução
 const createReproduction = async (req, res) => {
     try{
-        const {tagBufala, status, dataStatus, dataInseminacao, tipoInseminacao, vetResponsavel, tagPai} = req.body;
-        await reproductionService.Create(tagBufala, status, dataStatus, dataInseminacao, tipoInseminacao, vetResponsavel, tagPai);
+        // Validando os dados recebidos
+        const parsedData = createReproductionSchema.parse(req.body);
+        await reproductionService.Create(parsedData);
         res.sendStatus(201); // Cod. 201 (Created)
     } catch (error) {
-        console.log(error);
-        res.status(500).json({error:"Erro interno do servidor."}) // Cod. 500 (Internal Server Error)
+        console.log(error);     
+        if (error.errors) {
+            // Se o erro for de validação, retorne com status 400 e os erros
+            return res.status(400).json({ error: error.errors });
+        }    
+        // Caso contrário, erro genérico do servidor
+        res.status(500).json({ error: "Erro interno do servidor." }); // Cod. 500 (Internal Server Error)
     }
 };
 
@@ -45,15 +52,18 @@ const updateReproduction = async (req, res) => {
     try{
         if(ObjectId.isValid(req.params.id)){
             const id = req.params.id;
-            const {tagBufala, status, dataStatus, dataInseminacao, tipoInseminacao, vetResponsavel, tagPai} = req.body;
-            const reproduction = await reproductionService.Update(id, tagBufala, status, dataStatus, dataInseminacao, tipoInseminacao, vetResponsavel, tagPai);
+            const parsedData = updateReproductionSchema.parse(req.body);
+            const reproduction = await reproductionService.Update(id, parsedData);
             res.status(200).json({ reproduction }); // Cod. 200 (OK)
         } else {
             res.sendStatus(400); // Cod. 400 (Bad request)
         }
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500); // Cod. 500 (Internal Sever Error)
+        if (error.errors) {
+            // Se o erro for de validação
+            return res.status(400).json({ error: error.errors });
+        }
+        res.sendStatus(500); // Cod. 500 (Internal Server Error)
     }
 };
 

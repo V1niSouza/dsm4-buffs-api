@@ -1,3 +1,4 @@
+import { createLotSchema, updateLotSchema } from "../dtos/lot.dto.js";
 import lotService from "../services/lotService.js";
 import { ObjectId } from "mongodb";
 
@@ -15,11 +16,18 @@ const getAllLots = async (req, res) => {
 // Criar um novo Lote
 const createLot = async (req, res) => {
     try{
-        const {nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda} = req.body;
-        await lotService.Create(nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda);
+        // Validando os dados recebidos
+        const parsedData = createLotSchema.parse(req.body);
+        // Se passou na validação, prossegue com o processo de criação
+        await lotService.Create(parsedData);
         res.sendStatus(201); // Cod. 201 (Created)
     } catch (error) {
         console.log(error);
+        if (error.errors) {
+            // Se o erro for de validação, retorne com status 400 e os erros
+            return res.status(400).json({ error: error.errors });
+        }
+        // Caso contrário, erro genmérico do servidor
         res.status(500).json({error:"Erro interno do servidor."}) // Cod. 500 (Internal Server Error)
     }
 };
@@ -45,14 +53,16 @@ const updateLot = async (req, res) => {
     try{
         if(ObjectId.isValid(req.params.id)){
             const id = req.params.id;
-            const {nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda} = req.body;
-            const lot = await lotService.Update(id, nomeLote, tamanhoArea, unidadeMedida, qtdComporta, status, fazenda);
+            const parsedData = updateLotSchema.parse(req.body);
+            const lot = await lotService.Update(id, parsedData);
             res.status(200).json({ lot }); // Cod. 200 (OK)
         } else {
             res.sendStatus(400); // Cod. 400 (Bad request)
         }
     } catch (error) {
-        console.log(error);
+        if (error.errors) {
+            return res.status(400).json({ error:error.errors })
+        }
         res.sendStatus(500); // Cod. 500 (Internal Sever Error)
     }
 };

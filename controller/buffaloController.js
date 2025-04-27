@@ -1,4 +1,5 @@
 import buffaloService from "../services/buffaloService.js";
+import { createBuffaloSchema, updateBuffaloSchema } from "../dtos/buffalos.dto.js"; // Supondo que seu Zod schema esteja neste arquivo
 import { ObjectId } from "mongodb";
 
 // Lista todas Bufalos
@@ -14,13 +15,20 @@ const getAllBuffalos = async (req, res) => {
 
 // Criar uma nova Bufalo
 const createBuffalo = async (req, res) => {
-    try{
-        const {tag, nome, sexo, maturidade, raca, tagPai, tagMae, localizacao, grupo, atividade, zootecnico, sanitario} = req.body;
-        await buffaloService.Create(tag, nome, sexo, maturidade, raca, tagPai, tagMae, localizacao, grupo, atividade, zootecnico, sanitario);
+    try {
+        // Validando os dados recebidos
+        const parsedData = createBuffaloSchema.parse(req.body);
+        // Se passou na validação, prossegue com o processo de criação
+        await buffaloService.Create(parsedData);
         res.sendStatus(201); // Cod. 201 (Created)
     } catch (error) {
-        console.log(error);
-        res.status(500).json({error:"Erro interno do servidor."}) // Cod. 500 (Internal Server Error)
+        console.log(error);     
+        if (error.errors) {
+            // Se o erro for de validação, retorne com status 400 e os erros
+            return res.status(400).json({ error: error.errors });
+        }    
+        // Caso contrário, erro genérico do servidor
+        res.status(500).json({ error: "Erro interno do servidor." }); // Cod. 500 (Internal Server Error)
     }
 };
 
@@ -42,18 +50,21 @@ const deleteBuffalo = async (req, res) => {
 
 // Atualizar uma Bufalo
 const updateBuffalo = async (req, res) => {
-    try{
-        if(ObjectId.isValid(req.params.id)){
+    try {
+        if (ObjectId.isValid(req.params.id)) {
             const id = req.params.id;
-            const {tag, nome, sexo, maturidade, raca, tagPai, tagMae, localizacao, grupo, atividade, zootecnico, sanitario} = req.body;
-            const buffalo = await buffaloService.Update(id, tag, nome, sexo, maturidade, raca, tagPai, tagMae, localizacao, grupo, atividade, zootecnico, sanitario);
+            const parsedData = updateBuffaloSchema.parse(req.body);      
+            const buffalo = await buffaloService.Update(id, parsedData);      
             res.status(200).json({ buffalo }); // Cod. 200 (OK)
         } else {
             res.sendStatus(400); // Cod. 400 (Bad request)
         }
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500); // Cod. 500 (Internal Sever Error)
+        if (error.errors) {
+            // Se o erro for de validação
+            return res.status(400).json({ error: error.errors });
+        }
+        res.sendStatus(500); // Cod. 500 (Internal Server Error)
     }
 };
 

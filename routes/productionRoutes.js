@@ -4,7 +4,7 @@ import productionController from "../controller/productionController.js";
 const productionRoutes = express.Router();
 
 //Endpoint: Listar todas as Produções
-productionRoutes.get("/productios", productionController.getAllProductions);
+productionRoutes.get("/productions", productionController.getAllProductions);
 
 //Endpoint: Cadastrar uma nova Produção
 productionRoutes.post("/production", productionController.createProduction);

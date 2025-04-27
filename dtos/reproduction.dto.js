@@ -26,6 +26,7 @@ export const createReproductionSchema = z.object({
 
 // Schema principal para Atualização
 export const updateReproductionSchema = z.object({
+    tagBufala: z.string().optional(),
     status: z.enum(['Prenha', 'Cio']).optional(),
     dataStatus: z.coerce.date().optional(),
     dataInseminacao: z.coerce.date().optional(),
