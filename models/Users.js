@@ -12,6 +12,8 @@ const enderecoSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
     nome: String,
     email: String,
+    userName: String,
+    password: String,
     telefone: String,
     dataNascimento: Date,
     cargo: String,

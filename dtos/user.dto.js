@@ -11,6 +11,8 @@ const enderecoSchema = z.object({
 // Schema principal para Cadastro
 export const createUserSchema = z.object({
     nome: z.string(),
+    userName: z.string(),
+    password: z.string(),
     email: z.string().email({ message: "E-mail inválido" }),
     telefone: z.string().regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, {
         message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX"
@@ -28,6 +30,8 @@ export const createUserSchema = z.object({
 // Schema principal para Atualização
 export const updateUserSchema = z.object({
   nome: z.string().optional(),
+  userName: z.string().optional(),
+  password: z.string().optional(),
   email: z.string().email({ message: "E-mail inválido" }).optional(),
   telefone: z.string().regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, {
       message: "Telefone inválido. Use o formato (XX) XXXXX-XXXX"

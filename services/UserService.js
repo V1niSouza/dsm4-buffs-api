@@ -1,5 +1,6 @@
 import { createUserSchema, updateUserSchema } from "../dtos/user.dto.js";
 import User from "../models/Users.js";
+import bcrypt from "bcrypt";
 
 class userService {
   // Método para consultar todos os Usuários da API
@@ -15,7 +16,12 @@ class userService {
   // Método para criar um novo Usuários da API
   async Create(data) {
     try {
+      // Valida dados recebidos (DTO)
       const validatedData = createUserSchema.parse(data);
+      // Gera o hash da senha
+      const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+      // Substitui a senha pelo hash
+      validatedData.password = hashedPassword;
       const newUser = new User(validatedData);
       await newUser.save();
       return newUser;
@@ -43,6 +49,12 @@ class userService {
   async Update(id, data) {
     try {
       const validatedData = updateUserSchema.parse(data);
+      // Se o update tiver password, criptografa ela antes de atualizar
+      if (validatedData.password) {
+        const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+        validatedData.password = hashedPassword;
+      }
+
       // Busca o usuário especificado
       const updateUser = await User.findByIdAndUpdate(id, validatedData, {
         new: true,
