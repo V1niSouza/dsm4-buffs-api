@@ -11,7 +11,7 @@ const metricSchema = new mongoose.Schema({
 
 // Documento
 const lactationSchema = new mongoose.Schema({
-    tagBufala:  [{ type: mongoose.Schema.Types.ObjectId, ref: 'Buffalo' }],
+    tagBufala:  String,
     status: String,
     dataAtualizacao: Date,
     metrica: [metricSchema]     

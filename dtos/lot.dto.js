@@ -11,9 +11,9 @@ export const createLotSchema = z.object({
     tamanhoArea: z.number(),
     unidadeMedida: z.string(),
     qtdComporta: z.number().optional(),
-    status: z.string(), // Ativo, Manutenção
+    status: z.enum(['Ativo', 'Em uso', 'Em Manutenção']), // Ativo, Manutenção
     fazenda: objectIdSchema
-});
+}); 
 
 // Schema principal para Atualização
 export const updateLotSchema = z.object({
@@ -21,6 +21,6 @@ export const updateLotSchema = z.object({
     tamanhoArea: z.number().optional(),
     unidadeMedida: z.string().optional(),
     qtdComporta: z.number().optional(),
-    status: z.string().optional(), // Ativo, Manutenção
+    status: z.enum(['Ativo', 'Em uso', 'Manutenção']).optional(), // Ativo, Manutenção
     fazenda: objectIdSchema
 });

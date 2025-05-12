@@ -39,13 +39,13 @@ const sanitarioSchema = z.object({
 export const createBuffaloSchema = z.object({
     tag: z.string(),
     nome: z.string().optional(),
-    sexo: z.enum(['Macho', 'Femea']),
+    sexo: z.enum(['Macho', 'Fêmea']),
     maturidade: z.enum(['Bezerro', 'Novilha', 'Vaca', 'Touro']),
     raca: z.string(),
     tagPai: z.string(),
     tagMae: z.string(),
     localizacao: z.string(),
-    grupo: z.string(),
+    grupo: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Recém-parida']),
     atividade: z.array(atividadeSchema).optional(),
     zootecnico: z.array(zootecnicoSchema).optional(),
     sanitario: z.array(sanitarioSchema).optional()
@@ -55,13 +55,13 @@ export const createBuffaloSchema = z.object({
 export const updateBuffaloSchema = z.object({
     tag: z.string(),
     nome: z.string().optional(),
-    sexo: z.enum(['Macho', 'Femea']),
+    sexo: z.enum(['Macho', 'Fêmea']),
     maturidade: z.enum(['Bezerro', 'Novilha', 'Vaca', 'Touro']).optional(),
     raca: z.string().optional(),
     tagPai: z.string().optional(),
     tagMae: z.string().optional(),
     localizacao: z.string().optional(),
-    grupo: z.string().optional(),
+    grupo: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Recém-parida']).optional(),
     atividade: z.array(atividadeSchema).optional(),
     zootecnico: z.array(zootecnicoSchema).optional(),
     sanitario: z.array(sanitarioSchema).optional()
