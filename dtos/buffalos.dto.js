@@ -45,7 +45,7 @@ export const createBuffaloSchema = z.object({
     tagPai: z.string(),
     tagMae: z.string(),
     localizacao: z.string(),
-    grupo: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Recém-parida']),
+    grupo: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Bezerros']),
     atividade: z.array(atividadeSchema).optional(),
     zootecnico: z.array(zootecnicoSchema).optional(),
     sanitario: z.array(sanitarioSchema).optional()
@@ -61,7 +61,7 @@ export const updateBuffaloSchema = z.object({
     tagPai: z.string().optional(),
     tagMae: z.string().optional(),
     localizacao: z.string().optional(),
-    grupo: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Recém-parida']).optional(),
+    grupo: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Bezerros']).optional(),
     atividade: z.array(atividadeSchema).optional(),
     zootecnico: z.array(zootecnicoSchema).optional(),
     sanitario: z.array(sanitarioSchema).optional()
