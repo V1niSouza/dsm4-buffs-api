@@ -8,12 +8,13 @@ const objectIdSchema = z.string().regex(/^[a-f\d]{24}$/i, {
 // Schema principal para Cadastro
 export const createReproductionSchema = z.object({
     tagBufala: z.string(),
-    status: z.enum(['Prenha', 'Cio']),
+    status: z.enum(['Prenha', 'Cio', 'Finalizada']),
     dataStatus: z.coerce.date(),
     dataInseminacao: z.coerce.date().optional(),
     tipoInseminacao: z.enum(['Artificial', 'Monta Natural']).optional(),
     vetResponsavel: z.array(objectIdSchema),
-    tagPai: z.string()
+    tagPai: z.string(),
+    tagNascido: z.string().optional()
 }).refine((data) => {
     if (data.status === 'Prenha') {
         return data.dataInseminacao && data.tipoInseminacao && data.tagPai?.length > 0;
@@ -27,12 +28,13 @@ export const createReproductionSchema = z.object({
 // Schema principal para Atualização
 export const updateReproductionSchema = z.object({
     tagBufala: z.string().optional(),
-    status: z.enum(['Prenha', 'Cio']).optional(),
+    status: z.enum(['Prenha', 'Cio', 'Finalizada']).optional(),
     dataStatus: z.coerce.date().optional(),
     dataInseminacao: z.coerce.date().optional(),
     tipoInseminacao: z.enum(['Artificial', 'Monta Natural']).optional(),
     vetResponsavel: z.array(objectIdSchema).optional(),
-    tagPai: z.string().optional()
+    tagPai: z.string().optional(),
+    tagNascido: z.string().optional()
   }).refine(data => {
     if (data.status === 'Prenha') {
       return !!data.dataInseminacao && !!data.tipoInseminacao && data.tagPai?.length > 0

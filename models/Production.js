@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 // Documento aninhado
 const coletaSchema = new mongoose.Schema({

@@ -8,7 +8,8 @@ const reproductionSchema = new mongoose.Schema({
     dataInseminacao: Date,
     tipoInseminacao: String, // Artificial, Monta Natural
     vetResponsavel: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    tagPai: String
+    tagPai: String,
+    tagNascido: String
 })
 
 const Reproduction = mongoose.model('Reproduction', reproductionSchema)
