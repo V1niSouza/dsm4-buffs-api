@@ -21,8 +21,7 @@ const productionSchema = new mongoose.Schema({
     totalProduzido: Number,
     totalRejeitado: Number,
     totalRetirado: Number,
-    taxaAprovacao: Number,
-    taxaRejeicao: Number,
+    estoqueAtual: Number,
     dataAtualizacao: Date,
     coletas: [coletaSchema],
     producao: [producaoeSchema]
