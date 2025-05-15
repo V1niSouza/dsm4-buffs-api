@@ -78,9 +78,9 @@ class userService {
   }
 
   //Método para Listar um Usuário Especifico
-  async getOne(id) {
+  async getOne(email) {
     try {
-      const user = await User.findOne({ _id: id });
+      const user = await User.findOne({ email: email });
       return user;
     } catch (error) {
       console.log(error);
