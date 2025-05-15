@@ -17,7 +17,7 @@ userRoutes.delete("/user/:id", Auth.Authorization, userController.deleteUser);
 userRoutes.put("/user/:id", Auth.Authorization, userController.updateUser);
 
 //Endpoint: Listar um Usuário especifico
-userRoutes.get("/user/:id", userController.getOneUser);
+userRoutes.get("/user/:email", Auth.Authorization, userController.getOneUser);
 
 // Endpoint para Login do Usuário
 userRoutes.post("/auth", userController.loginUser)
