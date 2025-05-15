@@ -1,4 +1,5 @@
 import Lactation from "../models/Lactation.js";
+import productionService from "./productionService.js";
 import { createLactationSchema, updateLactationSchema } from "../dtos/lactation.dto.js";
 
 class lactationService {
@@ -6,6 +7,8 @@ class lactationService {
   async getAll() {
     try {
       const lactations = await Lactation.find();
+      await productionService.calcularProducao(); // Atualizar Média de lactação
+
       return lactations;
     } catch (error) {
       console.log(error);
@@ -18,6 +21,8 @@ class lactationService {
       const validatedData = createLactationSchema.parse(data);
       const newLactation = new Lactation(validatedData);
       await newLactation.save();
+      await productionService.calcularProducao(); // Atualizar Média de lactação
+      
       return newLactation;
     } catch (error) {
       console.log(error);

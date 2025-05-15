@@ -2,6 +2,7 @@ import lactationService from "../services/lactationService.js";
 import { createLactationSchema, updateLactationSchema } from "../dtos/lactation.dto.js"
 import { ObjectId } from "mongodb";
 
+
 // Lista todos as Lactações
 const getAllLactation = async (req, res) => {
     try {

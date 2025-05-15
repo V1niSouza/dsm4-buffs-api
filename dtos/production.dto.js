@@ -18,11 +18,6 @@ const producaoeSchema = z.object({
 
 // Schema principal para Cadastro
 export const createProductionSchema = z.object({
-    totalProduzido: z.number(),
-    totalRejeitado: z.number(),
-    totalRetirado: z.number(),
-    taxaAprovacao: z.number().min(0).max(100),
-    taxaRejeicao: z.number().min(0).max(100),
     dataAtualizacao: z.coerce.date(),
     coletas: z.array(coletaSchema).optional(),
     producao: z.array(producaoeSchema).optional()
@@ -30,11 +25,6 @@ export const createProductionSchema = z.object({
 
 // Schema principal para Atualização
 export const updateProductionSchema = z.object({
-    totalProduzido: z.number().optional(),
-    totalRejeitado: z.number().optional(),
-    totalRetirado: z.number().optional(),
-    taxaAprovacao: z.number().min(0).max(100),
-    taxaRejeicao: z.number().min(0).max(100),
     dataAtualizacao: z.coerce.date().optional(),
     coletas: z.array(coletaSchema).optional(),
     producao: z.array(producaoeSchema).optional()

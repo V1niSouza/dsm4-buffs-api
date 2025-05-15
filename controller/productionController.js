@@ -88,10 +88,4 @@ const getOneProduction = async (req, res) => {
   }
 };
 
-export default {
-  getAllProductions,
-  createProduction,
-  deleteProduction,
-  updateProduction,
-  getOneProduction,
-};
+export default { getAllProductions, createProduction, deleteProduction, updateProduction, getOneProduction };
