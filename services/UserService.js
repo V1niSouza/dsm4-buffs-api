@@ -27,7 +27,7 @@ class userService {
       return newUser;
     } catch (error) {
       console.log(error);
-      throw new Error("Erro na criação de Usuário: " + error.message);
+      throw error; // Deixa assim para o erro chegar no controller
     }
   }
 

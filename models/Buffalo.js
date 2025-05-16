@@ -21,7 +21,7 @@ const sanitarioSchema = new mongoose.Schema({
     tpSanitario: String, // Vacinação, Vermifugo, Tratamento
     medicacaoAplicada: String,
     dataAplicacao: Date,
-    proximoRetorno: String, // Sim ou Não
+    proximoRetorno: Boolean, // Sim ou Não
     dataRetorno: Date, // Se Sim 
     observacao: String,
     dosagem: Number,

@@ -5,6 +5,7 @@ const enderecoSchema = z.object({
     estado: z.string(),
     bairro: z.string(),
     rua: z.string(),
+    numero: z.string(),
     cidade: z.string()
 })
 

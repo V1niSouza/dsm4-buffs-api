@@ -6,7 +6,7 @@ export const createFeedingSchema = z.object({
     tpAlimentacao: z.string(),
     quantidade: z.number(),
     unidadeMedida: z.string(),
-    grupoDestinado: z.string(),  // Lactando, Secagem... (Grupo 1, Grupo 2, ...)
+    grupoDestinado: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Bezerros']).optional(),
     frequencia: z.number().optional(), // Quantidade por dia
     desc: z.string().optional() // Descrever o motivo desta alimentação
 })
@@ -17,7 +17,7 @@ export const updateFeedingSchema = z.object({
     tpAlimentacao: z.string().optional(),
     quantidade: z.number().optional(),
     unidadeMedida: z.string().optional(),
-    grupoDestinado: z.string().optional(),  // Lactando, Secagem... (Grupo 1, Grupo 2, ...)
+    grupoDestinado: z.enum(['Em lactação', 'Secagem', 'Seca', 'Pré-parto', 'Bezerros']).optional(),
     frequencia: z.number().optional(), // Quantidade por dia
     desc: z.string().optional() // Descrever o motivo desta alimentação
 })

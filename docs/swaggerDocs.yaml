@@ -1,0 +1,2726 @@
+paths:
+  /auth:
+    post:
+      summary: Autentica um usuário e retorna um token JWT
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "usuario@email.com"
+                password:
+                  type: string
+                  format: password
+                  example: "1234"
+      responses:
+        200:
+          description: Token retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        400:
+          description: Dados inválidos
+        401:
+          description: Credenciais inválidas
+        404:
+          description: Usuário não encontrado
+        500:
+          description: Erro interno do servidor
+
+
+  /user:
+    post:
+      summary: Cadastra um novo Usuário
+      tags: [Usuário]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                  example: "Paulo Cesar"
+                email:
+                  type: string
+                  example: "paulocesar@buffs.com.br"
+                userName:
+                  type: string
+                  example: "PC"
+                password:
+                  type: string
+                  example: "1234"
+                telefone:
+                  type: string
+                  example: "(11) 99756-8967"
+                dataNascimento:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+                cargo:
+                  type: string
+                  example: "Funcionário"
+                endereco:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      estado:
+                        type: string
+                        example: "SP"
+                      bairro:
+                        type: string
+                        example: "Bairro Novo"
+                      rua:
+                        type: string
+                        example: "Rua das Plameiras"
+                      numero:
+                        type: string
+                        example: "134"
+                      cidade:
+                        type: string
+                        example: "Registro"
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+  /users:
+    get:
+      summary: Consulta todos os Usuários
+      tags: [Usuário]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "681e83412f3e788744f0ea66"
+                    nome:
+                      type: string
+                      example: "Paulo Cesar"
+                    email:
+                      type: string
+                      example: "paulocesar@buffs.com.br"
+                    userName:
+                      type: string
+                      example: "PC"
+                    password:
+                      type: string
+                      example: "1234"
+                    telefone:
+                      type: string
+                      example: "(11) 99756-8967"
+                    dataNascimento:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    cargo:
+                      type: string
+                      example: "Funcionário"
+                    endereco:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          estado:
+                            type: string
+                            example: "SP"
+                          bairro:
+                            type: string
+                            example: "Bairro Novo"
+                          rua:
+                            type: string
+                            example: "Rua das Plameiras"
+                          numero:
+                            type: string
+                            example: "134"
+                          cidade:
+                            type: string
+                            example: "Registro"                      
+        500:
+          description: Erro interno no servidor
+
+  /user/{id}:
+    get:
+      summary: Consulta um Usuário especifico
+      tags: [Usuário]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista o usuário
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "681e83412f3e788744f0ea66"
+                    nome:
+                      type: string
+                      example: "Paulo Cesar"
+                    email:
+                      type: string
+                      example: "paulocesar@buffs.com.br"
+                    userName:
+                      type: string
+                      example: "PC"
+                    password:
+                      type: string
+                      example: "1234"
+                    telefone:
+                      type: string
+                      example: "(11) 99756-8967"
+                    dataNascimento:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    cargo:
+                      type: string
+                      example: "Funcionário"
+                    endereco:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          estado:
+                            type: string
+                            example: "SP"
+                          bairro:
+                            type: string
+                            example: "Bairro Novo"
+                          rua:
+                            type: string
+                            example: "Rua das Plameiras"
+                          numero:
+                            type: string
+                            example: "134"
+                          cidade:
+                            type: string
+                            example: "Registro"                      
+        404:
+          description: Usuário não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de um Usuário especifico
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Usuário]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                  example: "Paulo Cesar"
+                email:
+                  type: string
+                  example: "paulocesar@buffs.com.br"
+                userName:
+                  type: string
+                  example: "PC"
+                password:
+                  type: string
+                  example: "1234"
+                telefone:
+                  type: string
+                  example: "(11) 99756-8967"
+                dataNascimento:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+                cargo:
+                  type: string
+                  example: "Funcionário"
+                endereco:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      estado:
+                        type: string
+                        example: "SP"
+                      bairro:
+                        type: string
+                        example: "Bairro Novo"
+                      rua:
+                        type: string
+                        example: "Rua das Plameiras"
+                      numero:
+                        type: string
+                        example: "134"
+                      cidade:
+                        type: string
+                        example: "Registro" 
+      responses:
+        200:
+          description: Altera o usuário
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "681e83412f3e788744f0ea66"
+                    nome:
+                      type: string
+                      example: "Paulo Cesar Cadiani"
+                    email:
+                      type: string
+                      example: "paulocesar@buffs.com.br"
+                    userName:
+                      type: string
+                      example: "PC"
+                    password:
+                      type: string
+                      example: "1234"
+                    telefone:
+                      type: string
+                      example: "(11) 99756-8967"
+                    dataNascimento:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    cargo:
+                      type: string
+                      example: "Funcionário"
+                    endereco:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          estado:
+                            type: string
+                            example: "SP"
+                          bairro:
+                            type: string
+                            example: "Bairro Novo"
+                          rua:
+                            type: string
+                            example: "Rua das Plameiras"
+                          numero:
+                            type: string
+                            example: "134"
+                          cidade:
+                            type: string
+                            example: "Registro"                      
+        404:
+          description: Usuário não encontrado
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+    
+    delete:
+      summary: Deleta um Usuário especifico
+      tags: [Usuário]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /property:
+    post:
+      summary: Cadastra uma nova Propriedade
+      security:
+        - bearerAuth: []
+      tags: [Propriedade]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  nome:
+                    type: string
+                    example: "Propriedade Fazenda Boa Vista"
+                  finalidade:
+                    type: string
+                    enum: [Lactação, Corte, Reprodução]
+                    example: "Lactação"
+                  tpManejo:
+                    type: string
+                    enum: [Rotação de Piquete, Estabulo]
+                    example: "Rotação de Piquete"
+                  endereco:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        estado:
+                          type: string
+                          example: "SP"
+                        bairro:
+                          type: string
+                          example: "Bairro Novo"
+                        rua:
+                          type: string
+                          example: "Rua das Plameiras"
+                        numero:
+                          type: string
+                          example: "134"
+                        cidade:
+                          type: string
+                          example: "Registro"
+                  responsavel:
+                    type: array
+                    example: [6803717ab6f1b35df655fcd0]
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+  /propertys: 
+    get:
+      summary: Consulta todos as Propriedades
+      security:
+        - bearerAuth: []
+      tags: [Propriedade]
+      responses:
+        200:
+          description: Lista de propriedades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "680ea4e514079c15c2cdabf6"
+                    nome:
+                      type: string
+                      example: "Propriedade Fazenda Boa Vista"
+                    finalidade:
+                      type: string
+                      example: "Lactação"
+                    tpManejo:
+                      type: string
+                      example: "Rotação de Piquete"
+                    endereco:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          estado:
+                            type: string
+                            example: "SP"
+                          bairro:
+                            type: string
+                            example: "Bairro Novo"
+                          rua:
+                            type: string
+                            example: "Rua das Plameiras"
+                          numero:
+                            type: string
+                            example: "134"
+                          cidade:
+                            type: string
+                            example: "Registro"
+                    responsavel:
+                      type: array
+                      example: 6803717ab6f1b35df655fcd0                                    
+        500:
+          description: Erro interno no servidor
+
+  /property/{id}:
+    get:
+      summary: Consulta uma Propriedade especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Propriedade]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de propriedades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "680ea4e514079c15c2cdabf6"
+                    nome:
+                      type: string
+                      example: "Propriedade Fazenda Boa Vista"
+                    finalidade:
+                      type: string
+                      example: "Lactação"
+                    tpManejo:
+                      type: string
+                      example: "Rotação de Piquete"
+                    endereco:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          estado:
+                            type: string
+                            example: "SP"
+                          bairro:
+                            type: string
+                            example: "Bairro Novo"
+                          rua:
+                            type: string
+                            example: "Rua das Plameiras"
+                          numero:
+                            type: string
+                            example: "134"
+                          cidade:
+                            type: string
+                            example: "Registro"
+                    responsavel:
+                      type: array
+                      example: 6803717ab6f1b35df655fcd0                          
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de uma Propriedade especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Propriedade]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  nome:
+                    type: string
+                    example: "Propriedade Fazenda Boa Vista"
+                  finalidade:
+                    type: string
+                    enum: [Lactação, Corte, Reprodução]
+                    example: "Lactação"
+                  tpManejo:
+                    type: string
+                    enum: [Rotação de Piquete, Estabulo]
+                    example: "Rotação de Piquete"
+                  endereco:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        estado:
+                          type: string
+                          example: "SP"
+                        bairro:
+                          type: string
+                          example: "Bairro Novo"
+                        rua:
+                          type: string
+                          example: "Rua das Plameiras"
+                        numero:
+                          type: string
+                          example: "134"
+                        cidade:
+                          type: string
+                          example: "Registro"
+                  responsavel:
+                    type: array
+                    example: [6803717ab6f1b35df655fcd0]
+      responses:
+        200:
+          description: Lista de propriedades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "680ea4e514079c15c2cdabf6"
+                    nome:
+                      type: string
+                      example: "Propriedade Fazenda Boa Vista"
+                    finalidade:
+                      type: string
+                      enum: [Lactação, Corte, Reprodução]
+                      example: "Lactação"
+                    tpManejo:
+                      type: string
+                      enum: [Rotação de Piquete, Estabulo]
+                      example: "Rotação de Piquete"
+                    endereco:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          estado:
+                            type: string
+                            example: "SP"
+                          bairro:
+                            type: string
+                            example: "Bairro Novo"
+                          rua:
+                            type: string
+                            example: "Rua das Plameiras"
+                          numero:
+                            type: string
+                            example: "134"
+                          cidade:
+                            type: string
+                            example: "Registro"
+                    responsavel:
+                      type: array
+                      example: 6803717ab6f1b35df655fcd0                           
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+    
+    delete:
+      summary: Deleta uma Propriedade especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Propriedade]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /lot:
+    post:
+      summary: Cadastra um novo Lote
+      tags: [Lote]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nomeLote:
+                  type: string
+                  example: "Lote 01"
+                tamanhoArea:
+                  type: number
+                  example: 10000
+                unidadeMedida:
+                  type: string
+                  example: "Metros"
+                qtdComporta:
+                  type: number
+                  example: 15
+                status:
+                  type: string
+                  enum: [Disponível, Em uso, Em Restauração]
+                  example: "Em uso"
+                fazenda:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+  /lots:
+    get:
+      summary: Consulta todos os Lotes
+      security:
+        - bearerAuth: []
+      tags: [Lote]
+      responses:
+        200:
+          description: Lista de lotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "680ea4e514079c15c2cdabf6"
+                    nomeLote:
+                      type: string
+                      example: "Lote 01"
+                    tamanhoArea:
+                      type: number
+                      example: 10000
+                    unidadeMedida:
+                      type: string
+                      example: "m²"
+                    qtdComporta:
+                      type: number
+                      example: 15
+                    status:
+                      type: string
+                      enum: [Disponível, Em uso, Em Restauração]
+                      example: "Em uso"
+                    fazenda:
+                      type: array
+                      example: "681e864565ea4acb4cf88537"                                       
+        500:
+          description: Erro interno no servidor
+          
+  /lot/{id}:
+    get:
+      summary: Consulta um Lote especifico
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Lote]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de lote
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "680ea4e514079c15c2cdabf6"
+                    nomeLote:
+                      type: string
+                      example: "Lote 01"
+                    tamanhoArea:
+                      type: number
+                      example: 1000
+                    unidadeMedida: 
+                      type: string
+                      example: "m²"
+                    qtdComporta:
+                      type: number
+                      example: 15
+                    status:
+                      type: string
+                      enum: [Disponível, Em uso, Em Restauração]
+                      example: "Em uso"
+                    fazenda:
+                      type: array
+                      example: "681e864565ea4acb4cf88537"                           
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de um Lote especifico
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Lote]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  nomeLote:
+                    type: string
+                    example: "Lote 01"
+                  tamanhoArea:
+                    type: number
+                    example: 1000
+                  unidadeMedida:
+                    type: string
+                    example: "m²"
+                  qtdComporta:
+                    type: number
+                    example: 15
+                  status:
+                    type: string
+                    enum: [Disponível, Em uso, Em Restauração]
+                    example: "Em uso"
+                  fazenda:
+                    type: array
+                    example: "681e864565ea4acb4cf88537"
+      responses:
+        200:
+          description: Lista do lote
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id: 
+                      type: string
+                      example: "680ea4e514079c15c2cdabf6"
+                    nomeLote:
+                      type: string
+                      example: "Lote 01"
+                    tamanhoArea:
+                      type: number
+                      example: 1000
+                    unidadeMedida: 
+                      type: string
+                      example: "m²"
+                    qtdComporta:
+                      type: number
+                      example: 15
+                    status:
+                      type: string
+                      enum: [Disponível, Em uso, Em Restauração]
+                      example: "Em uso"
+                    fazenda:
+                      type: array
+                      example: "681e864565ea4acb4cf88537"                                                     
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+   
+    delete:
+      summary: Deleta um Lote especifico
+      tags: [Lote]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /buffalo:
+    post:
+      summary: Cadastra um novo Bufalo
+      tags: [Bufalo]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                  example: "BUF001"
+                nome:
+                  type: string
+                  example: "Bella"
+                sexo:
+                  type: string
+                  enum: [Macho, Fêmea]
+                  example: "Fêmea"
+                maturidade:
+                  type: string
+                  enum: [Bezerro, Novilha, Vaca, Touro]
+                  example: "Vaca"
+                raca:
+                  type: string
+                  example: "Murrah"
+                tagPai:
+                  type: string
+                  example: "BUF002"
+                tagMae:
+                  type: string
+                  example: "BUF003"
+                localizacao:
+                  type: string
+                  example: "Ordenha"
+                grupo:
+                  type: string
+                  enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                  example: "BUF003"
+                atividade:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      status: 
+                        type: string
+                        example: "Ativa"
+                      observacao:
+                        type: string
+                        example: "Ativa na Propriedade"
+                      dataAtualizacao:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                zootecnico:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      peso: 
+                        type: number
+                        example: 580
+                      condicaoCorporal:
+                        type: string
+                        example: "Boa"
+                      dataAtualizacao:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                      funcionarioResponsavel:
+                        type: array
+                        example: [6803717ab6f1b35df655fcd0]
+                sanitario:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      tpSanitario: 
+                        type: string
+                        example: "."
+                      medicacaoAplicada:
+                        type: string
+                        example: "."
+                      dataAplicacao:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                      proximoRetorno:
+                        type: boolean
+                        example: true
+                      dataRetorno:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                      observacao:
+                        type: string
+                        example: "Estado critico, necessita de cuidados somente com medicamento x"
+                      dosagem:
+                        type: number
+                        example: 5
+                      unidadeMedidaDosagem:
+                        type: string
+                        example: "ml"
+                      doencaCombatida:
+                        type: string
+                        example: "Clostridium"
+                      funcionarioResponsavel:
+                        type: array
+                        example: [6803717ab6f1b35df655fcd0]
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+  /buffalos:
+    get:
+      summary: Consulta todos os Bufalos
+      security:
+        - bearerAuth: []
+      tags: [Bufalo]
+      responses:
+        200:
+          description: Lista de Bufalos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                    example: "BUF001"
+                  nome:
+                    type: string
+                    example: "Bella"
+                  sexo:
+                    type: string
+                    enum: [Macho, Fêmea]
+                    example: "Fêmea"
+                  maturidade:
+                    type: string
+                    enum: [Bezerro, Novilha, Vaca, Touro]
+                    example: "Vaca"
+                  raca:
+                    type: string
+                    example: "Murrah"
+                  tagPai:
+                    type: string
+                    example: "BUF002"
+                  tagMae:
+                    type: string
+                    example: "BUF003"
+                  localizacao:
+                    type: string
+                    example: "Ordenha"
+                  grupo:
+                    type: string
+                    enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                    example: "BUF003"
+                  atividade:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status: 
+                          type: string
+                          example: "Ativa"
+                        observacao:
+                          type: string
+                          example: "Ativa na Propriedade"
+                        dataAtualizacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                  zootecnico:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        peso: 
+                          type: number
+                          example: 580
+                        condicaoCorporal:
+                          type: string
+                          example: "Boa"
+                        dataAtualizacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        funcionarioResponsavel:
+                          type: array
+                          example: [6803717ab6f1b35df655fcd0]
+                  sanitario:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tpSanitario: 
+                          type: string
+                          example: "."
+                        medicacaoAplicada:
+                          type: string
+                          example: "."
+                        dataAplicacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        proximoRetorno:
+                          type: boolean
+                          example: true
+                        dataRetorno:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        observacao:
+                          type: string
+                          example: "Estado critico, necessita de cuidados somente com medicamento x"
+                        dosagem:
+                          type: number
+                          example: 5
+                        unidadeMedidaDosagem:
+                          type: string
+                          example: "ml"
+                        doencaCombatida:
+                          type: string
+                          example: "Clostridium"
+                        funcionarioResponsavel:
+                          type: array
+                          example: [6803717ab6f1b35df655fcd0]                                       
+        500:
+          description: Erro interno no servidor
+ 
+  /buffalo/{id}:
+    get:
+      summary: Consulta um Bufalo especifico
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      tags: [Bufalo]
+      responses:
+        200:
+          description: Lista de Bufalos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id: 
+                    type: string
+                    example: "681e83412f3e788744f0ea66"
+                  tag:
+                    type: string
+                    example: "BUF001"
+                  nome:
+                    type: string
+                    example: "Bella"
+                  sexo:
+                    type: string
+                    enum: [Macho, Fêmea]
+                    example: "Fêmea"
+                  maturidade:
+                    type: string
+                    enum: [Bezerro, Novilha, Vaca, Touro]
+                    example: "Vaca"
+                  raca:
+                    type: string
+                    example: "Murrah"
+                  tagPai:
+                    type: string
+                    example: "BUF002"
+                  tagMae:
+                    type: string
+                    example: "BUF003"
+                  localizacao:
+                    type: string
+                    example: "Ordenha"
+                  grupo:
+                    type: string
+                    enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                    example: "BUF003"
+                  atividade:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status: 
+                          type: string
+                          example: "Ativa"
+                        observacao:
+                          type: string
+                          example: "Ativa na Propriedade"
+                        dataAtualizacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                  zootecnico:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        peso: 
+                          type: number
+                          example: 580
+                        condicaoCorporal:
+                          type: string
+                          example: "Boa"
+                        dataAtualizacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        funcionarioResponsavel:
+                          type: array
+                          example: [6803717ab6f1b35df655fcd0]
+                  sanitario:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tpSanitario: 
+                          type: string
+                          example: "."
+                        medicacaoAplicada:
+                          type: string
+                          example: "."
+                        dataAplicacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        proximoRetorno:
+                          type: boolean
+                          example: true
+                        dataRetorno:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        observacao:
+                          type: string
+                          example: "Estado critico, necessita de cuidados somente com medicamento x"
+                        dosagem:
+                          type: number
+                          example: 5
+                        unidadeMedidaDosagem:
+                          type: string
+                          example: "ml"
+                        doencaCombatida:
+                          type: string
+                          example: "Clostridium"
+                        funcionarioResponsavel:
+                          type: array
+                          example: [6803717ab6f1b35df655fcd0]                                       
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de um Bufalo especifico
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Bufalo]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                  example: "BUF001"
+                nome:
+                  type: string
+                  example: "Bella"
+                sexo:
+                  type: string
+                  enum: [Macho, Fêmea]
+                  example: "Fêmea"
+                maturidade:
+                  type: string
+                  enum: [Bezerro, Novilha, Vaca, Touro]
+                  example: "Vaca"
+                raca:
+                  type: string
+                  example: "Murrah"
+                tagPai:
+                  type: string
+                  example: "BUF002"
+                tagMae:
+                  type: string
+                  example: "BUF003"
+                localizacao:
+                  type: string
+                  example: "Ordenha"
+                grupo:
+                  type: string
+                  enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                  example: "BUF003"
+                atividade:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      status: 
+                        type: string
+                        example: "Ativa"
+                      observacao:
+                        type: string
+                        example: "Ativa na Propriedade"
+                      dataAtualizacao:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                zootecnico:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      peso: 
+                        type: number
+                        example: 580
+                      condicaoCorporal:
+                        type: string
+                        example: "Boa"
+                      dataAtualizacao:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                      funcionarioResponsavel:
+                        type: array
+                        example: [6803717ab6f1b35df655fcd0]
+                sanitario:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      tpSanitario: 
+                        type: string
+                        example: "."
+                      medicacaoAplicada:
+                        type: string
+                        example: "."
+                      dataAplicacao:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                      proximoRetorno:
+                        type: boolean
+                        example: true
+                      dataRetorno:
+                        type: date
+                        example: "1995-03-10T00:00:00.000Z"
+                      observacao:
+                        type: string
+                        example: "Estado critico, necessita de cuidados somente com medicamento x"
+                      dosagem:
+                        type: number
+                        example: 5
+                      unidadeMedidaDosagem:
+                        type: string
+                        example: "ml"
+                      doencaCombatida:
+                        type: string
+                        example: "Clostridium"
+                      funcionarioResponsavel:
+                        type: array
+                        example: [6803717ab6f1b35df655fcd0]
+      responses:
+        200:
+          description: Lista de Bufalos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                    example: "BUF001"
+                  nome:
+                    type: string
+                    example: "Bella"
+                  sexo:
+                    type: string
+                    enum: [Macho, Fêmea]
+                    example: "Fêmea"
+                  maturidade:
+                    type: string
+                    enum: [Bezerro, Novilha, Vaca, Touro]
+                    example: "Vaca"
+                  raca:
+                    type: string
+                    example: "Murrah"
+                  tagPai:
+                    type: string
+                    example: "BUF002"
+                  tagMae:
+                    type: string
+                    example: "BUF003"
+                  localizacao:
+                    type: string
+                    example: "Ordenha"
+                  grupo:
+                    type: string
+                    enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                    example: "BUF003"
+                  atividade:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status: 
+                          type: string
+                          example: "Ativa"
+                        observacao:
+                          type: string
+                          example: "Ativa na Propriedade"
+                        dataAtualizacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                  zootecnico:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        peso: 
+                          type: number
+                          example: 580
+                        condicaoCorporal:
+                          type: string
+                          example: "Boa"
+                        dataAtualizacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        funcionarioResponsavel:
+                          type: array
+                          example: [6803717ab6f1b35df655fcd0]
+                  sanitario:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tpSanitario: 
+                          type: string
+                          example: "."
+                        medicacaoAplicada:
+                          type: string
+                          example: "."
+                        dataAplicacao:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        proximoRetorno:
+                          type: boolean
+                          example: true
+                        dataRetorno:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        observacao:
+                          type: string
+                          example: "Estado critico, necessita de cuidados somente com medicamento x"
+                        dosagem:
+                          type: number
+                          example: 5
+                        unidadeMedidaDosagem:
+                          type: string
+                          example: "ml"
+                        doencaCombatida:
+                          type: string
+                          example: "Clostridium"
+                        funcionarioResponsavel:
+                          type: array
+                          example: [6803717ab6f1b35df655fcd0]                                                    
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+    delete:
+      summary: Deleta um Bufalo especifico
+      tags: [Bufalo]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /reproduction:
+    post:
+      summary: Cadastra uma nova Reprodução
+      tags: [Reprodução]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagBufala:
+                  type: string
+                  example: "BUF101"
+                status:
+                  type: string
+                  enum: [Prenha, Cio, Finalizada]
+                  example: "Finalizado"
+                dataStatus:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+                dataInseminacao:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+                tipoInseminacao:
+                  type: string
+                  enum: [Artificial, Monta natural]
+                  example: "Artificial"
+                vetResponsavel:
+                  type: array
+                  example: [6803717ab6f1b35df655fcd0]
+                tagPai:
+                  type: string
+                  example: "BU6001"
+                tagNascido:
+                  type: string
+                  example: "BZ4001"
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+  /reproductions:
+    get:
+      summary: Consulta todas as Reproduções
+      tags: [Reprodução]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de reproduções
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tagBufala:
+                    type: string
+                    example: "BUF101"
+                  status:
+                    type: string
+                    enum: [Prenha, Cio, Finalizada]
+                    example: "Finalizado"
+                  dataStatus:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  dataInseminacao:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  tipoInseminacao:
+                    type: string
+                    enum: [Artificial, Monta natural]
+                    example: "Artificial"
+                  vetResponsavel:
+                    type: array
+                    example: [6803717ab6f1b35df655fcd0]
+                  tagPai:
+                    type: string
+                    example: "BU6001"
+                  tagNascido:
+                    type: string
+                    example: "BZ4001"
+        500:
+          description: Erro interno no servidor
+
+  /reproduction/{id}:
+    get:
+      summary: Consulta uma Reprodução especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Reprodução]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista a reprodução
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tagBufala:
+                    type: string
+                    example: "BUF101"
+                  status:
+                    type: string
+                    enum: [Prenha, Cio, Finalizada]
+                    example: "Finalizado"
+                  dataStatus:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  dataInseminacao:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  tipoInseminacao:
+                    type: string
+                    enum: [Artificial, Monta natural]
+                    example: "Artificial"
+                  vetResponsavel:
+                    type: array
+                    example: [6803717ab6f1b35df655fcd0]
+                  tagPai:
+                    type: string
+                    example: "BU6001"
+                  tagNascido:
+                    type: string
+                    example: "BZ4001"
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de uma Reprodução especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Reprodução]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagBufala:
+                  type: string
+                  example: "BUF101"
+                status:
+                  type: string
+                  enum: [Prenha, Cio, Finalizada]
+                  example: "Finalizado"
+                dataStatus:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+                dataInseminacao:
+                  type: date
+                  example: "1995-03-10T00:00:00.000Z"
+                tipoInseminacao:
+                  type: string
+                  enum: [Artificial, Monta natural]
+                  example: "Artificial"
+                vetResponsavel:
+                  type: array
+                  example: [6803717ab6f1b35df655fcd0]
+                tagPai:
+                  type: string
+                  example: "BU6001"
+                tagNascido:
+                  type: string
+                  example: "BZ4001"
+      responses:
+        200:
+          description: Lista de reproduções
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tagBufala:
+                    type: string
+                    example: "BUF101"
+                  status:
+                    type: string
+                    enum: [Prenha, Cio, Finalizada]
+                    example: "Finalizado"
+                  dataStatus:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  dataInseminacao:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  tipoInseminacao:
+                    type: string
+                    enum: [Artificial, Monta natural]
+                    example: "Artificial"
+                  vetResponsavel:
+                    type: array
+                    example: [6803717ab6f1b35df655fcd0]
+                  tagPai:
+                    type: string
+                    example: "BU6001"
+                  tagNascido:
+                    type: string
+                    example: "BZ4001"                                                    
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+    delete:
+      summary: Deleta uma Reprodução especifica
+      tags: [Reprodução]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /feeding:
+    post:
+      summary: Cadastra uma nova Alimentação
+      tags: [Alimentação]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                  example: "Alimento Ração X"
+                tpAlimentacao:
+                  type: string
+                  example: "Sólido"
+                quantidade:
+                  type: number
+                  example: 5
+                unidadeMedida:
+                  type: string
+                  example: "kg"
+                grupoDestinado:
+                  type: string
+                  enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                  example: "Secagem"
+                frequencia:
+                  type: number
+                  example: 3
+                desc:
+                  type: string
+                  example: "Alimentação diária para suporte à futura lactação."
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+    
+  /feedings:
+    get:
+      summary: Consulta todas as Alimentações
+      tags: [Alimentação]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de alimentações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nome:
+                    type: string
+                    example: "Alimento Ração X"
+                  tpAlimentacao:
+                    type: string
+                    example: "Sólido"
+                  quantidade:
+                    type: number
+                    example: 5
+                  unidadeMedida:
+                    type: string
+                    example: "kg"
+                  grupoDestinado:
+                    type: string
+                    enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                    example: "Secagem"
+                  frequencia:
+                    type: number
+                    example: 3
+                  desc:
+                    type: string
+                    example: "Alimentação diária para suporte à futura lactação."
+        500:
+          description: Erro interno no servidor
+
+  /feeding/{id}:
+    get:
+      summary: Consulta uma Alimentação especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Alimentação]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de alimentações
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nome:
+                    type: string
+                    example: "Alimento Ração X"
+                  tpAlimentacao:
+                    type: string
+                    example: "Sólido"
+                  quantidade:
+                    type: number
+                    example: 5
+                  unidadeMedida:
+                    type: string
+                    example: "kg"
+                  grupoDestinado:
+                    type: string
+                    enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                    example: "Secagem"
+                  frequencia:
+                    type: number
+                    example: 3
+                  desc:
+                    type: string
+                    example: "Alimentação diária para suporte à futura lactação."
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de uma Alimentação especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Alimentação]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                  example: "Alimento Ração X"
+                tpAlimentacao:
+                  type: string
+                  example: "Sólido"
+                quantidade:
+                  type: number
+                  example: 5
+                unidadeMedida:
+                  type: string
+                  example: "kg"
+                grupoDestinado:
+                  type: string
+                  enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                  example: "Secagem"
+                frequencia:
+                  type: number
+                  example: 3
+                desc:
+                  type: string
+                  example: "Alimentação diária para suporte à futura lactação."
+      responses:
+        200:
+          description: Lista de reproduções
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nome:
+                    type: string
+                    example: "Alimento Ração X"
+                  tpAlimentacao:
+                    type: string
+                    example: "Sólido"
+                  quantidade:
+                    type: number
+                    example: 5
+                  unidadeMedida:
+                    type: string
+                    example: "kg"
+                  grupoDestinado:
+                    type: string
+                    enum: [Em lactação, Secagem, Seca, Pré-parto, Bezerros]
+                    example: "Secagem"
+                  frequencia:
+                    type: number
+                    example: 3
+                  desc:
+                    type: string
+                    example: "Alimentação diária para suporte à futura lactação."                                               
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+    
+    delete:
+      summary: Deleta uma Alimentação especifica
+      tags: [Alimentação]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /lactation:
+    post:
+      summary: Cadastra uma nova Lactação
+      security:
+        - bearerAuth: []
+      tags: [Lactação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  tagBufala:
+                    type: string
+                    example: "BUF001"
+                  status:
+                    type: string
+                    example: "Em andamento"
+                  dataAtualizacao:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  metrica:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        quantidade:
+                          type: number
+                          example: 7.4
+                        unidadeMedida:
+                          type: string
+                          example: "L"
+                        dataMedida:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        dataInicio:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        dataFim:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor    
+
+  /lactations:
+    get:
+      summary: Consulta todas as Lactações
+      tags: [Lactação]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de lactação
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tagBufala:
+                      type: string
+                      example: "BUF001"
+                    status:
+                      type: string
+                      example: "Em andamento"
+                    dataAtualizacao:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    metrica:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          quantidade:
+                            type: number
+                            example: 7.4
+                          unidadeMedida:
+                            type: string
+                            example: "L"
+                          dataMedida:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          dataInicio:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          dataFim:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+        500:
+          description: Erro interno no servidor
+
+  /lactation/{id}:
+    get:
+      summary: Consulta uma Lactação especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Lactação]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de lactações
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tagBufala:
+                      type: string
+                      example: "BUF001"
+                    status:
+                      type: string
+                      example: "Em andamento"
+                    dataAtualizacao:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    metrica:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          quantidade:
+                            type: number
+                            example: 7.4
+                          unidadeMedida:
+                            type: string
+                            example: "L"
+                          dataMedida:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          dataInicio:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          dataFim:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Altera dados de uma Lactação especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Lactação]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  tagBufala:
+                    type: string
+                    example: "BUF001"
+                  status:
+                    type: string
+                    example: "Em andamento"
+                  dataAtualizacao:
+                    type: date
+                    example: "1995-03-10T00:00:00.000Z"
+                  metrica:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        quantidade:
+                          type: number
+                          example: 7.4
+                        unidadeMedida:
+                          type: string
+                          example: "L"
+                        dataMedida:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        dataInicio:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        dataFim:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+      responses:
+        200:
+          description: Lista de reproduções
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tagBufala:
+                      type: string
+                      example: "BUF001"
+                    status:
+                      type: string
+                      example: "Em andamento"
+                    dataAtualizacao:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    metrica:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          quantidade:
+                            type: number
+                            example: 7.4
+                          unidadeMedida:
+                            type: string
+                            example: "L"
+                          dataMedida:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          dataInicio:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          dataFim:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"                                               
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+    delete:
+      summary: Deleta uma Lactação especifica
+      tags: [Lactação]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+
+  /production:
+    post:
+      summary: Cadastra uma nova Produção
+      security:
+        - bearerAuth: []
+      tags: [Produção]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  coletas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dataColeta:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        quantidadeColetada:
+                          type: number
+                          example: 1000
+                        empresaColeta:
+                          type: string
+                          example: "Cesar Laticinio Ltda"
+                        valorPago:
+                          type: number
+                          example: 2,000.65
+                        resultado:
+                          type: string
+                          example: "Positivo"
+                        desc:
+                          type: string
+                          example: "Teste deu positivo tranquilamente, industria satisfeita com o resultado"
+      responses:
+        201:
+          description: Created
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor    
+
+  /productions:
+    get:
+      summary: Consulta todas as Produções
+      tags: [Produção]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de produções
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dataAtualizacao:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    totalProduzido:
+                      type: number
+                      example: 29.10
+                    totalRetirado:
+                      type: number
+                      example: 10
+                    totalRejeitado:
+                      type: number
+                      example: 0
+                    estoqueAtual:
+                      type: number
+                      example: 19.10
+                    coletas:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          dataColeta:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          quantidadeColetada:
+                            type: number
+                            example: 10
+                          empresaColeta:
+                            type: string
+                            example: "Cesar Laticinio Ltda"
+                          valorPago:
+                            type: number
+                            example: 2,000.65
+                          resultado:
+                            type: string
+                            example: "Positivo"
+                          desc:
+                            type: string
+                            example: "Teste deu positivo tranquilamente, industria satisfeita com o resultado"
+                    producao:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          quantidadeAdicao:
+                            type: number
+                            example: 29.10
+                          dataAtualizacao:
+                            type: date
+                            example: "2025-05-10T00:00:00.000+00:00"
+        500:
+          description: Erro interno no servidor
+
+  /production/{id}:
+    get:
+      summary: Consulta uma Produção especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Produção]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Lista de lactações
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dataAtualizacao:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    totalProduzido:
+                      type: number
+                      example: 29.10
+                    totalRetirado:
+                      type: number
+                      example: 10
+                    totalRejeitado:
+                      type: number
+                      example: 0
+                    estoqueAtual:
+                      type: number
+                      example: 19.10
+                    coletas:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          dataColeta:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          quantidadeColetada:
+                            type: number
+                            example: 10
+                          empresaColeta:
+                            type: string
+                            example: "Cesar Laticinio Ltda"
+                          valorPago:
+                            type: number
+                            example: 2,000.65
+                          resultado:
+                            type: string
+                            example: "Positivo"
+                          desc:
+                            type: string
+                            example: "Teste deu positivo tranquilamente, industria satisfeita com o resultado"
+                    producao:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          quantidadeAdicao:
+                            type: number
+                            example: 29.10
+                          dataAtualizacao:
+                            type: date
+                            example: "2025-05-10T00:00:00.000+00:00"
+        404:
+          description: Propriedade não encontrado
+        400:
+          description: ID inválido
+        500:
+          description: Erro interno no servidor        
+
+    put:
+      summary: Altera dados de uma Produção especifica
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      tags: [Produção]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  coletas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dataColeta:
+                          type: date
+                          example: "1995-03-10T00:00:00.000Z"
+                        quantidadeColetada:
+                          type: number
+                          example: 1000
+                        empresaColeta:
+                          type: string
+                          example: "Cesar Laticinio Ltda"
+                        valorPago:
+                          type: number
+                          example: 2,000.65
+                        resultado:
+                          type: string
+                          example: "Positivo"
+                        desc:
+                          type: string
+                          example: "Teste deu positivo tranquilamente, industria satisfeita com o resultado"
+      responses:
+        200:
+          description: Lista de reproduções
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dataAtualizacao:
+                      type: date
+                      example: "1995-03-10T00:00:00.000Z"
+                    totalProduzido:
+                      type: number
+                      example: 29.10
+                    totalRetirado:
+                      type: number
+                      example: 10
+                    totalRejeitado:
+                      type: number
+                      example: 0
+                    estoqueAtual:
+                      type: number
+                      example: 19.10
+                    coletas:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          dataColeta:
+                            type: date
+                            example: "1995-03-10T00:00:00.000Z"
+                          quantidadeColetada:
+                            type: number
+                            example: 10
+                          empresaColeta:
+                            type: string
+                            example: "Cesar Laticinio Ltda"
+                          valorPago:
+                            type: number
+                            example: 2,000.65
+                          resultado:
+                            type: string
+                            example: "Positivo"
+                          desc:
+                            type: string
+                            example: "Teste deu positivo tranquilamente, industria satisfeita com o resultado"
+                    producao:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          quantidadeAdicao:
+                            type: number
+                            example: 29.10
+                          dataAtualizacao:
+                            type: date
+                            example: "2025-05-10T00:00:00.000+00:00"                                            
+        404:
+          description: Propriedade não encontrada
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
+
+    delete:
+      summary: Deleta uma Produção especifica
+      tags: [Produção]
+      parameters: [
+        {
+          name: id,
+          in: path,
+          required: true,
+          schema: {
+            type: string,
+            format: mongo-id,
+            example: 60c72b2f9b1d4c3a5c8e4a2b
+          }
+        }
+      ]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: No content          
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor

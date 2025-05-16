@@ -26,7 +26,7 @@ const sanitarioSchema = z.object({
     tpSanitario: z.string(),
     medicacaoAplicada: z.string(),
     dataAplicacao: z.coerce.date(),
-    proximoRetorno: z.enum(['Sim', 'Não']),
+    proximoRetorno: z.boolean(),
     dataRetorno: z.coerce.date().optional(),
     observacao: z.string().optional(),
     dosagem: z.number(),

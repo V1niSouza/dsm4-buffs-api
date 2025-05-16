@@ -5,13 +5,14 @@ const enderecoSchema = new mongoose.Schema({
     estado: String,
     bairro: String,
     rua: String,
+    numero: String,
     cidade: String
 })
 
 // Documento
 const userSchema = new mongoose.Schema({
     nome: String,
-    email: String,
+    email: {type: String, unique: true},
     userName: String,
     password: String,
     telefone: String,

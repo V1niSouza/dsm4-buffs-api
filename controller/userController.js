@@ -30,6 +30,10 @@ const createUser = async (req, res) => {
       // Se o erro for de validação, retorne com status 400 e os erros
       return res.status(400).json({ error: error.errors });
     }
+    // Erro de email duplicado
+    if (error.code === 11000 && error.keyPattern?.email) {
+      return res.status(400).json({ error: "Email já cadastrado." });
+    }
     // Caso contrário, erro genérico do servidor
     res.status(500).json({ error: "Erro interno do servidor." }); // Cod. 500 (Internal Server Error)
   }
