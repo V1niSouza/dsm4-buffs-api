@@ -8,7 +8,13 @@ class productionService {
   async getAll() {
     try {
       const productions = await Production.find();
-      return productions;
+      for (const producao of productions) {
+        await this.calcularProducao(producao._id);
+      }
+
+      // Retorna a lista já atualizada
+      const updatedProductions = await Production.find();
+      return updatedProductions;
     } catch (error) {
       console.log(error);
     }
@@ -41,54 +47,155 @@ class productionService {
     }
   }
 
-  // Método para Atualizar uma Produção da API
-  async Update(id, data) {
-    try {
-      const validatedData = updateProductionSchema.parse(data);
-      // Separar o que é historico e o que é dado comum
-      const { coletas, producao, ...dadosComuns } = validatedData;
-      const updateOps = {};
-      // Atualiza dados "comuns" diretamente
-      if (Object.keys(dadosComuns).length > 0) {
-        updateOps.$set = dadosComuns;
-      }
-      // Atualiza históricos com $push
-      if (coletas) {
-        updateOps.$push = {
-          ...(updateOps.$push || {}),
-          coletas: coletas,
-        };
-      }
-      if (producao) {
-        updateOps.$push = {
-          ...(updateOps.$push || {}),
-          producao: producao,
-        };
-      }
-      // Busca o usuário especificado
-      const updateProduction = await Production.findByIdAndUpdate(
-        id,
-        updateOps,
-        {
-          new: true,
-        }
-      );
+// Método para Atualizar uma Produção da API - Versão Corrigida
+async Update(id, data) {
+  try {
+    const validatedData = updateProductionSchema.parse(data);
+    const { coletas, producao, ...dadosComuns } = validatedData;
+    const updateOps = {};
 
-      if (!updateProduction) {
-        console.log(
-          `Nenhuma Produção com o ID: ${id} foi encontrado para atualizção`
-        );
-        return;
-      }
-      console.log(
-        `Dados da Produção do ID ${updateProduction.id}, foram alterados com sucesso!`
-      );
-      return updateProduction;
-    } catch (error) {
-      console.log(error);
-      throw new Error("Erro na atualização do búfalo: " + error.message);
+    if (Object.keys(dadosComuns).length > 0) {
+      updateOps.$set = dadosComuns;
     }
+    
+    if (coletas) {
+      updateOps.$push = {
+        ...(updateOps.$push || {}),
+        coletas: { $each: coletas } // Usando $each para múltiplas coletas
+      };
+    }
+    
+    if (producao) {
+      updateOps.$push = {
+        ...(updateOps.$push || {}),
+        producao: { $each: producao }
+      };
+    }
+
+    const updateProduction = await Production.findByIdAndUpdate(
+      id,
+      updateOps,
+      { new: true }
+    );
+
+    if (!updateProduction) {
+      throw new Error(`Nenhuma Produção com o ID: ${id} encontrada.`);
+    }
+
+    // Recalcula automaticamente após inserir coleta
+    if (coletas) {
+      await this.calcularProducao(id); // Passando o ID para garantir que atualiza o correto
+    }
+
+    return updateProduction;
+  } catch (error) {
+    console.error("Erro detalhado:", error);
+    throw new Error("Erro na atualização da produção: " + error.message);
   }
+}
+
+async calcularProducao(productionId) {
+  try {
+    const lactacoes = await Lactation.find();
+    const producao = await Production.findById(productionId);
+
+    if (!producao) {
+      throw new Error("Produção não encontrada.");
+    }
+
+    let quantidadeTotal = 0;
+    const producaoPorData = {};
+
+    // Agrupando produção por data
+    lactacoes.forEach(lactacao => {
+      lactacao.metrica?.forEach(metrica => {
+        const quantidade = parseFloat(metrica.quantidade) || 0;
+        quantidadeTotal += quantidade;
+
+        const data = new Date(metrica.dataMedida).toISOString().split('T')[0];
+        producaoPorData[data] = (producaoPorData[data] || 0) + quantidade;
+      });
+    });
+
+    const datasOrdenadas = Object.keys(producaoPorData).sort();
+
+    // Atualiza o array de produção por data
+    producao.producao = datasOrdenadas.map(data => ({
+      quantidadeAdicao: producaoPorData[data],
+      dataAtualizacao: new Date(data),
+    }));
+
+    // Cálculo do total retirado
+    let quantidadeRetirada = 0;
+
+    producao.coletas?.forEach(coleta => {
+      const quantidade = parseFloat(coleta.quantidadeColetada) || 0;
+      quantidadeRetirada += quantidade;
+    });
+
+    // Encontra a última data de coleta aprovada
+    let ultimaDataColeta = null;
+
+    const coletasAprovadas = producao.coletas?.filter(c => c.resultado === "Aprovado") || [];
+
+    if (coletasAprovadas.length > 0) {
+      ultimaDataColeta = coletasAprovadas.reduce((max, coleta) => {
+        const data = new Date(coleta.dataColeta).toISOString().split('T')[0];
+        return data > max ? data : max;
+      }, "0000-00-00");
+    }
+
+    // Calcula estoque atual
+    let estoqueAtual = 0;
+
+    if (ultimaDataColeta) {
+      datasOrdenadas.forEach(data => {
+        if (data >= ultimaDataColeta) {
+          estoqueAtual += producaoPorData[data];
+        }
+      });
+    } else {
+      estoqueAtual = quantidadeTotal;
+    }
+
+    // Soma produção até a última coleta aprovada
+    let producaoAteUltimaColeta = 0;
+    if (ultimaDataColeta) {
+      datasOrdenadas.forEach(data => {
+        if (data <= ultimaDataColeta) {
+          producaoAteUltimaColeta += producaoPorData[data];
+        }
+      });
+    }
+
+    // Aplica as regras:
+    // - Estoque reduz apenas pelas coletas Aprovadas
+    const totalRetirado = producao.coletas?.reduce((acc, coleta) => {
+      return acc + (parseFloat(coleta.quantidadeColetada) || 0);
+    }, 0) || 0;
+
+    const totalAprovado = coletasAprovadas.reduce((acc, coleta) => {
+      return acc + (parseFloat(coleta.quantidadeColetada) || 0);
+    }, 0);
+
+    const totalRejeitado = totalRetirado - totalAprovado;
+
+    // Atualiza os campos principais
+    producao.totalProduzido = quantidadeTotal;
+    producao.totalRetirado = totalRetirado;
+    producao.estoqueAtual = estoqueAtual;
+    producao.totalRejeitado = totalRejeitado;
+    producao.dataAtualizacao = new Date();
+
+    await producao.save();
+    console.log("Produção recalculada com sucesso.");
+    return producao;
+  } catch (error) {
+    console.error("Erro no cálculo:", error);
+    throw new Error("Erro ao calcular produção: " + error.message);
+  }
+}
+
 
   //Método para Listar uma Produção Especifico
   async getOne(id) {
@@ -100,103 +207,7 @@ class productionService {
     }
   }
 
-async calcularProducao() {
-  try {
-    const lactacoes = await Lactation.find();
 
-    if (lactacoes.length === 0) {
-      return console.log("Nenhuma lactação encontrada.");
-    }
-
-    let quantidadeTotal = 0; // soma total de todas as ordenhas (historicamente)
-    const producaoPorData = {};
-
-    // Agrupa produção por data (YYYY-MM-DD)
-    lactacoes.forEach(lactacao => {
-      lactacao.metrica?.forEach(metrica => {
-        quantidadeTotal += metrica.quantidade;
-
-        const data = new Date(metrica.dataMedida).toISOString().split('T')[0];
-        if (!producaoPorData[data]) {
-          producaoPorData[data] = 0;
-        }
-        producaoPorData[data] += metrica.quantidade;
-      });
-    });
-
-    // Ordena as datas para facilitar os cálculos
-    const datasOrdenadas = Object.keys(producaoPorData).sort();
-
-    // Converte para array do formato esperado
-    const novasAdicoes = datasOrdenadas.map(data => ({
-      quantidadeAdicao: producaoPorData[data],
-      dataAtualizacao: new Date(data),
-    }));
-
-    // Busca produção atual
-    const producao = await Production.findOne();
-
-    if (!producao) {
-      return console.log("Nenhuma produção encontrada para atualizar.");
-    }
-
-    // Soma total de coletas (total retirado)
-    let quantidadeRetirada = 0;
-    producao.coletas?.forEach(coleta => {
-      quantidadeRetirada += coleta.quantidade;
-    });
-
-    // Calcula estoqueAtual: produção desde a última coleta até hoje
-    // Pega a última data de coleta (formato YYYY-MM-DD)
-    let ultimaDataColeta = null;
-    if (producao.coletas && producao.coletas.length > 0) {
-      ultimaDataColeta = producao.coletas.reduce((max, coleta) => {
-        const dataColeta = new Date(coleta.dataAtualizacao).toISOString().split('T')[0];
-        return dataColeta > max ? dataColeta : max;
-      }, "0000-00-00");
-    }
-
-    // Soma produção desde última coleta até hoje
-    let estoqueAtual = 0;
-    if (ultimaDataColeta) {
-      // percorre datas ordenadas, soma só as datas posteriores ou iguais à última coleta
-      datasOrdenadas.forEach(data => {
-        if (data >= ultimaDataColeta) {
-          estoqueAtual += producaoPorData[data];
-        }
-      });
-    } else {
-      // Se não tem coleta, estoqueAtual = total produzido
-      estoqueAtual = quantidadeTotal;
-    }
-
-    // Calcula totalRejeitado = produção até última coleta - total retirado
-    // Se negativo, considera zero
-    let producaoAteUltimaColeta = 0;
-    if (ultimaDataColeta) {
-      datasOrdenadas.forEach(data => {
-        if (data <= ultimaDataColeta) {
-          producaoAteUltimaColeta += producaoPorData[data];
-        }
-      });
-    }
-    const totalRejeitado = Math.max(producaoAteUltimaColeta - quantidadeRetirada, 0);
-
-    // Atualiza os campos no documento de produção
-    producao.totalProduzido = quantidadeTotal;
-    producao.totalRetirado = quantidadeRetirada;
-    producao.estoqueAtual = estoqueAtual;
-    producao.totalRejeitado = totalRejeitado;
-    producao.producao = novasAdicoes;
-
-    await producao.save();
-
-    console.log("Produção atualizada com os cálculos estendidos.");
-
-  } catch (error) {
-    console.error("Erro ao calcular produção:", error);
-  }
-}
 
 
 }
