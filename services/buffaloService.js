@@ -94,6 +94,18 @@ class buffaloService {
       console.log(error);
     }
   }
+
+  // Método para Listar uma Bufalo Especifica por Tag
+  async getOneTag(tag) {
+    try {
+      const buffalo = await Buffalo.findOne({ tag: tag });
+      return buffalo;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
+
+
 
 export default new buffaloService();

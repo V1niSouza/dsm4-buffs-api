@@ -19,4 +19,7 @@ buffaloRoutes.put("/buffalo/:id", Auth.Authorization, buffaloController.updateBu
 //Endpoint: Listar um Bufalo especifico
 buffaloRoutes.get("/buffalo/:id", Auth.Authorization, buffaloController.getOneBuffalo);
 
+buffaloRoutes.get("/buffalo/tag/:tag", Auth.Authorization, buffaloController.getOneBuffaloTag);
+
+
 export default buffaloRoutes

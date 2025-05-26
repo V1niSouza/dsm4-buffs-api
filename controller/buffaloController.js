@@ -88,4 +88,21 @@ const getOneBuffalo = async (req, res) => {
     }
 };
 
-export default { getAllBuffalos, createBuffalo, deleteBuffalo, updateBuffalo, getOneBuffalo };
+const getOneBuffaloTag = async (req, res) => {
+    try {
+        const { tag } = req.params;
+        const buffalo = await buffaloService.getOneTag(tag);
+
+        if (!buffalo) {
+            return res.status(404).json({ error: "Búfalo não encontrado." });
+        }
+
+        res.status(200).json({ buffalo });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro interno do servidor." });
+    }
+};
+
+
+export default { getAllBuffalos, createBuffalo, deleteBuffalo, updateBuffalo, getOneBuffalo, getOneBuffaloTag };
