@@ -7,8 +7,6 @@ class lactationService {
   async getAll() {
     try {
       const lactations = await Lactation.find();
-      await productionService.calcularProducao(); // Atualizar Média de lactação
-
       return lactations;
     } catch (error) {
       console.log(error);
