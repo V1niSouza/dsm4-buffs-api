@@ -53,9 +53,9 @@ export const createBuffaloSchema = z.object({
 
 // Schema principal para Atualização
 export const updateBuffaloSchema = z.object({
-    tag: z.string(),
+    tag: z.string().optional(),
     nome: z.string().optional(),
-    sexo: z.enum(['Macho', 'Fêmea']),
+    sexo: z.enum(['Macho', 'Fêmea']).optional(),
     maturidade: z.enum(['Bezerro', 'Novilha', 'Vaca', 'Touro']).optional(),
     raca: z.string().optional(),
     tagPai: z.string().optional(),
