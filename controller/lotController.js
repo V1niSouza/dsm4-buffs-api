@@ -19,8 +19,8 @@ const createLot = async (req, res) => {
         // Validando os dados recebidos
         const parsedData = createLotSchema.parse(req.body);
         // Se passou na validação, prossegue com o processo de criação
-        await lotService.Create(parsedData);
-        res.sendStatus(201); // Cod. 201 (Created)
+        const lot = await lotService.Create(parsedData);
+        res.status(201).json({ lot }); // Cod. 201 (Created)
     } catch (error) {
         console.log(error);
         if (error.errors) {

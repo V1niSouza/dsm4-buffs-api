@@ -19,8 +19,8 @@ const createProduction = async (req, res) => {
     // Validando os dados recebidos
     const parsedData = createProductionSchema.parse(req.body);
     // Se passou na validação, prossegue com o processo de criação
-    await productionService.Create(parsedData);
-    res.sendStatus(201); // Cod. 201 (Created)
+    const production = await productionService.Create(parsedData);
+    res.status(201).json({ production });
   } catch (error) {
     console.log(error);
     if (error.errors) {
