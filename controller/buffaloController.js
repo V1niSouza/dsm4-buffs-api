@@ -19,8 +19,8 @@ const createBuffalo = async (req, res) => {
         // Validando os dados recebidos
         const parsedData = createBuffaloSchema.parse(req.body);
         // Se passou na validação, prossegue com o processo de criação
-        await buffaloService.Create(parsedData);
-        res.sendStatus(201); // Cod. 201 (Created)
+        const buffalo = await buffaloService.Create(parsedData);
+        res.status(201).json({ buffalo });
     } catch (error) {
         console.log(error);     
         if (error.errors) {
