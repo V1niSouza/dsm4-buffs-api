@@ -19,7 +19,7 @@ const createReproduction = async (req, res) => {
         // Validando os dados recebidos
         const parsedData = createReproductionSchema.parse(req.body);
         const reproduction = await reproductionService.Create(parsedData);
-        res.sendStatus(201).json({ reproduction }); // Cod. 201 (Created)
+        res.status(201).json({ reproduction }); 
     } catch (error) {
         console.log(error);     
         if (error.errors) {
