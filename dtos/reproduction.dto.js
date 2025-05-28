@@ -7,22 +7,14 @@ const objectIdSchema = z.string().regex(/^[a-f\d]{24}$/i, {
 
 // Schema principal para Cadastro
 export const createReproductionSchema = z.object({
-    tagBufala: z.string(),
-    status: z.enum(['Prenha', 'Cio', 'Finalizada']),
-    dataStatus: z.coerce.date(),
+    tagBufala: z.string().optional(),
+    status: z.enum(['Prenha', 'Cio', 'Finalizada']).optional(),
+    dataStatus: z.coerce.date().optional(),
     dataInseminacao: z.coerce.date().optional(),
     tipoInseminacao: z.enum(['Artificial', 'Monta Natural']).optional(),
-    vetResponsavel: z.array(objectIdSchema),
-    tagPai: z.string(),
+    vetResponsavel: z.array(objectIdSchema).optional(),
+    tagPai: z.string().optional(),
     tagNascido: z.string().optional()
-}).refine((data) => {
-    if (data.status === 'Prenha') {
-        return data.dataInseminacao && data.tipoInseminacao && data.tagPai?.length > 0;
-    }
-    return true;
-}, {
-    message: "Para status 'Prenha', é necessário informar dataInseminacao, tipoInseminacao e tagPai",
-    path: ['dataInseminacao'] // pode ser qualquer um dos campos como referência pro erro
 });
 
 // Schema principal para Atualização
