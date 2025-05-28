@@ -8,7 +8,7 @@ const objectIdSchema = z.string().regex(/^[a-f\d]{24}$/i, {
 // Subschema (aninhado)
 const atividadeSchema = z.object({
     status: z.string(), // Ativa, Descartada
-    observacao: z.string().optional(), // Motivo
+    observacao: z.string().optional(), 
     dataAtualizacao: z.coerce.date()
 })
 
@@ -26,7 +26,7 @@ const sanitarioSchema = z.object({
     tpSanitario: z.string(),
     medicacaoAplicada: z.string(),
     dataAplicacao: z.coerce.date(),
-    proximoRetorno: z.boolean(),
+    proximoRetorno: z.string(),
     dataRetorno: z.coerce.date().optional(),
     observacao: z.string().optional(),
     dosagem: z.number(),
